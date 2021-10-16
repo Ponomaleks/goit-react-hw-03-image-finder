@@ -1,26 +1,39 @@
-import logo from './logo.svg';
 import './App.css';
-import { useEffect, useRef, useState } from 'react';
+import { Component } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Searchbar from './Components/Searchbar/Searchbar';
+import API from './Servises/API';
+import ImageGalleryItem from './Components/ImageGalleryItem';
+
+class App extends Component {
+  state = {
+    req: 'cat',
+    page: 1,
+    images: [],
+  };
+
+  handleSubmit = request => {
+    this.setState({ req: request, page: 1 });
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.req !== this.state.req) {
+      this.searchImages();
+    }
+  }
+
+  searchImages = () => {
+    this.setState({ images: API(this.state.req, this.state.page).hits });
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <Searchbar onSubmit={this.handleSubmit} />
+        <ImageGalleryItem />
+      </div>
+    );
+  }
 }
 
 export default App;
