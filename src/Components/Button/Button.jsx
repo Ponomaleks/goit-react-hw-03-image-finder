@@ -1,13 +1,8 @@
-export default function Button() {
-  const handleClick = () => {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
-    });
-  };
+import s from './Button.module.css';
 
+export default function Button({ onClick }) {
   return (
-    <button type="button" onClick={handleClick}>
+    <button className={s.Button} type="button" onClick={onClick}>
       Load more
     </button>
   );

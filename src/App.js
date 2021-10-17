@@ -6,6 +6,7 @@ import API from './Servises/API';
 import ImageGallery from './Components/ImageGallery';
 import Button from './Components/Button';
 import LoaderEl from './Components/Loader';
+import Modal from './Components/Modal/Modal';
 
 const statuses = {
   IDLE: 'idle',
@@ -19,40 +20,80 @@ class App extends Component {
     req: '',
     page: 1,
     images: [],
-    status: 'pending',
+    status: statuses.IDLE,
+    showModal: false,
   };
 
   handleSubmit = request => {
-    this.setState({ req: request, page: 1 });
+    if (this.state.req !== request) {
+      this.setState({ req: request, page: 1 });
+    }
   };
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.req !== this.state.req) {
+      this.setState({ status: statuses.PENDING });
       this.searchImages();
+    }
+    if (prevState.page !== this.state.page) {
+      API(this.state.req, this.state.page, this.getImages);
+    }
+    if ((this.state.page > 1) & !this.state.showModal) {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
     }
   }
 
   searchImages = () => {
     API(this.state.req, this.state.page, this.setImages);
-    //   .then(response => {
-    //   this.setState({ images: response.data.hits });
-    // });
   };
 
-  setImages = images => {
-    this.setState({ images: images });
-    this.setState({ status: statuses.RESOLVED });
+  setImages = (images, status) => {
+    this.setState({ images: images, status: status });
+  };
+
+  getImages = (newImages, status) => {
+    this.setState({ images: [...this.state.images, ...newImages], status: status });
+  };
+
+  nexpPage = () => {
+    this.setState({ page: this.state.page + 1 });
+  };
+
+  togleModal = (webformatURL, tags) => {
+    this.setState({
+      showModal: !this.state.showModal,
+      modalImg: { img: webformatURL, descr: tags },
+    });
+    // console.log(e);
   };
 
   render() {
+    let loadMore;
+    if (this.state.images.length >= 12) {
+      loadMore = true;
+    } else loadMore = false;
+    console.log(loadMore);
     const { images, status } = this.state;
 
     return (
       <div className="App">
         <Searchbar onSubmit={this.handleSubmit} />
-        {status === 'pending' && <LoaderEl />}
-        {status === 'resolved' && <ImageGallery cards={images} />}
-        {/* {if(this.state.images.length>1){<Button></Button>}} */}
+        {status === statuses.RESOLVED && (
+          <ImageGallery cards={images} openModal={this.togleModal} />
+        )}
+        {status === statuses.PENDING && <LoaderEl />}
+        {status === statuses.REJECTED && <h2>Something went wrong. Please try again</h2>}
+        {loadMore && <Button onClick={this.nexpPage} />}
+        {this.state.showModal && (
+          <Modal
+            img={this.state.modalImg.img}
+            description={this.state.modalImg.descr}
+            closeModal={this.togleModal}
+          />
+        )}
       </div>
     );
   }

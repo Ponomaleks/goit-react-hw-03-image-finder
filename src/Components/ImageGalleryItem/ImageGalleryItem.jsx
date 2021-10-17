@@ -1,7 +1,12 @@
-export default function ImageGalleryItem({ card: { id, webformatURL, tags } }) {
+import s from './ImageGalleryItem.module.css';
+
+export default function ImageGalleryItem({
+  card: { id, webformatURL, tags, largeImageURL },
+  openModal,
+}) {
   return (
-    <li className="ImageGalleryItem">
-      <img src={webformatURL} alt={tags} className="ImageGalleryItem-image" />
+    <li className={s.ImageGalleryItem} onClick={e => openModal(largeImageURL, tags)}>
+      <img src={webformatURL} alt={tags} className={s.ImageGalleryItemImage} />
     </li>
   );
 }

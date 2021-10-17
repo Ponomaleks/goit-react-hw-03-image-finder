@@ -10,13 +10,18 @@ export default function API(query, page, setImages) {
     )}&page=${page}&key=${key}&image_type=photo&orientation=horizontal&per_page=12`,
   )
     .then(function (response) {
-      setImages(response.data.hits);
+      setImages(response.data.hits, 'resolved');
     })
     .catch(function (error) {
-      // handle error
+      setImages([], 'rejected');
       console.log(error);
     });
-  // .then(function () {
-  //   // always executed
+  // .then(() => {
+  //   if (page > 1) {
+  //     window.scrollTo({
+  //       top: document.documentElement.scrollHeight,
+  //       behavior: 'smooth',
+  //     });
+  //   }
   // });
 }
