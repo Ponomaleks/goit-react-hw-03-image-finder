@@ -3,13 +3,23 @@ import { Component } from 'react';
 
 import Searchbar from './Components/Searchbar/Searchbar';
 import API from './Servises/API';
-import ImageGalleryItem from './Components/ImageGalleryItem';
+import ImageGallery from './Components/ImageGallery';
+import Button from './Components/Button';
+import LoaderEl from './Components/Loader';
+
+const statuses = {
+  IDLE: 'idle',
+  PENDING: 'pending',
+  RESOLVED: 'resolved',
+  REJECTED: 'rejected',
+};
 
 class App extends Component {
   state = {
-    req: 'cat',
+    req: '',
     page: 1,
     images: [],
+    status: 'pending',
   };
 
   handleSubmit = request => {
@@ -23,14 +33,26 @@ class App extends Component {
   }
 
   searchImages = () => {
-    this.setState({ images: API(this.state.req, this.state.page).hits });
+    API(this.state.req, this.state.page, this.setImages);
+    //   .then(response => {
+    //   this.setState({ images: response.data.hits });
+    // });
+  };
+
+  setImages = images => {
+    this.setState({ images: images });
+    this.setState({ status: statuses.RESOLVED });
   };
 
   render() {
+    const { images, status } = this.state;
+
     return (
       <div className="App">
         <Searchbar onSubmit={this.handleSubmit} />
-        <ImageGalleryItem />
+        {status === 'pending' && <LoaderEl />}
+        {status === 'resolved' && <ImageGallery cards={images} />}
+        {/* {if(this.state.images.length>1){<Button></Button>}} */}
       </div>
     );
   }
