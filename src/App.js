@@ -33,22 +33,25 @@ class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.req !== this.state.req) {
       this.setState({ status: statuses.PENDING });
-      this.setState({ page: 1 });
+      // this.setState({ page: 1 });
       this.searchImages();
+      return;
     }
     if (prevState.page !== this.state.page) {
       API(this.state.req, this.state.page, this.getImages);
+      console.log('increase page');
     }
     if ((this.state.page > 1) & !this.state.showModal) {
       window.scrollTo({
         top: document.documentElement.scrollHeight,
         behavior: 'smooth',
       });
-    }
+    } else return;
   }
 
   searchImages = () => {
     API(this.state.req, this.state.page, this.setImages);
+    console.log('fetch');
   };
 
   setImages = (images, status) => {
