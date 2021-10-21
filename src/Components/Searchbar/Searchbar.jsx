@@ -14,7 +14,7 @@ class Searchbar extends Component {
     e.preventDefault();
     if (this.state.input.trim('') !== '') {
       this.props.onSubmit(this.state.input);
-      this.setState({ input: '' });
+      // this.setState({ input: '' });
     }
   };
 

@@ -33,6 +33,7 @@ class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.req !== this.state.req) {
       this.setState({ status: statuses.PENDING });
+      this.setState({ page: 1 });
       this.searchImages();
     }
     if (prevState.page !== this.state.page) {
@@ -75,7 +76,7 @@ class App extends Component {
     if (this.state.images.length >= 12) {
       loadMore = true;
     } else loadMore = false;
-    console.log(loadMore);
+
     const { images, status } = this.state;
 
     return (
